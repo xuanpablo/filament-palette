@@ -6,13 +6,17 @@ use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
+use Filament\Panel;
 use Filament\Resources\Resource;
+use Filament\Support\Icons\Heroicon;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Xuanpablo\FilamentPalette\Support\CommandItem;
 
 class NavigationCommands
 {
-    public static function get(?\Filament\Panel $panel = null): Collection
+    public static function get(?Panel $panel = null): Collection
     {
         $commands = collect();
 
@@ -43,7 +47,7 @@ class NavigationCommands
 
             foreach ($navigation as $group) {
                 if ($group instanceof NavigationGroup) {
-                    $groupLabel = $group->getLabel() ?? 'Navigation';
+                    $groupLabel = $group->getLabel() ?? __('filament-palette::filament-palette.groups.navigation');
                     $items = $group->getItems();
 
                     if ($items instanceof \Traversable) {
@@ -64,7 +68,6 @@ class NavigationCommands
         return $commands;
     }
 
-
     protected static function flattenNavigationItem(NavigationItem $item, string $groupLabel, Collection $commands): void
     {
         $url = $item->getUrl();
@@ -76,7 +79,7 @@ class NavigationCommands
 
         if (filled($url)) {
             $icon = $item->getIcon();
-            $icon = ($icon instanceof \BackedEnum || is_string($icon)) ? $icon : \Filament\Support\Icons\Heroicon::OutlinedArrowTopRightOnSquare;
+            $icon = ($icon instanceof \BackedEnum || is_string($icon)) ? $icon : Heroicon::OutlinedArrowTopRightOnSquare;
 
             $commands->push(CommandItem::make(
                 label: $item->getLabel(),
@@ -90,7 +93,7 @@ class NavigationCommands
         foreach ($childItems as $child) {
             if ($child instanceof NavigationItem && $child->isVisible() && filled($child->getUrl())) {
                 $icon = $child->getIcon();
-                $icon = ($icon instanceof \BackedEnum || is_string($icon)) ? $icon : \Filament\Support\Icons\Heroicon::OutlinedArrowTopRightOnSquare;
+                $icon = ($icon instanceof \BackedEnum || is_string($icon)) ? $icon : Heroicon::OutlinedArrowTopRightOnSquare;
 
                 $commands->push(CommandItem::make(
                     label: $child->getLabel(),
@@ -119,7 +122,7 @@ class NavigationCommands
                     continue;
                 }
 
-                if (! method_exists($page, 'getUrl')) {
+                if (! static::pageIsAccessible($page)) {
                     continue;
                 }
 
@@ -134,10 +137,10 @@ class NavigationCommands
                     $group = $page::getNavigationGroup();
 
                     if (blank($title)) {
-                        $title = $page::getTitle();
+                        $title = Str::headline(class_basename($page));
                     }
 
-                    if ($title instanceof \Illuminate\Contracts\Support\Htmlable) {
+                    if ($title instanceof Htmlable) {
                         $title = $title->toHtml();
                     } else {
                         $title = (string) $title;
@@ -145,10 +148,10 @@ class NavigationCommands
 
                     $groupValue = $group instanceof \UnitEnum
                         ? (string) ($group->value ?? $group->name)
-                        : ((string) ($group ?? 'Pages'));
+                        : ((string) ($group ?? __('filament-palette::filament-palette.groups.pages')));
 
-                    $navIcon = method_exists($page, 'getNavigationIcon') ? $page::getNavigationIcon() : null;
-                    $icon = ($navIcon instanceof \BackedEnum || is_string($navIcon)) ? $navIcon : \Filament\Support\Icons\Heroicon::OutlinedHome;
+                    $navIcon = $page::getNavigationIcon();
+                    $icon = ($navIcon instanceof \BackedEnum || is_string($navIcon)) ? $navIcon : Heroicon::OutlinedHome;
 
                     $commands->push(CommandItem::make(
                         label: strip_tags($title),
@@ -172,6 +175,45 @@ class NavigationCommands
         return str_starts_with($page, 'Filament\\Auth\\');
     }
 
+    /**
+     * Whether the current user may access the given page class.
+     * Fails closed: if the gate throws, the page is excluded.
+     */
+    public static function pageIsAccessible(string $page): bool
+    {
+        try {
+            return ! method_exists($page, 'canAccess') || (bool) $page::canAccess();
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Whether the current user may access the given resource class.
+     * Fails closed: if the gate throws, the resource is excluded.
+     */
+    public static function resourceIsAccessible(string $resource): bool
+    {
+        try {
+            return ! method_exists($resource, 'canAccess') || (bool) $resource::canAccess();
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Whether the current user may create records for the given resource class.
+     * Fails closed: if the gate throws, creation is hidden.
+     */
+    public static function resourceCanCreate(string $resource): bool
+    {
+        try {
+            return ! method_exists($resource, 'canCreate') || (bool) $resource::canCreate();
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
     protected static function getFromResources($panel): Collection
     {
         $commands = collect();
@@ -181,6 +223,10 @@ class NavigationCommands
 
             foreach ($resources as $resource) {
                 if (! is_string($resource) || ! is_subclass_of($resource, Resource::class)) {
+                    continue;
+                }
+
+                if (! static::resourceIsAccessible($resource)) {
                     continue;
                 }
 
@@ -203,24 +249,26 @@ class NavigationCommands
                 }
                 $modelLabel = (string) $modelLabel;
 
+                $resourcesGroup = __('filament-palette::filament-palette.groups.resources');
+
                 try {
                     if ($resource::hasPage('index')) {
                         $listUrl = $resource::getUrl('index', shouldGuessMissingParameters: true);
                         $commands->push(CommandItem::make(
-                            label: "List {$pluralLabel}",
+                            label: __('filament-palette::filament-palette.actions.list', ['label' => $pluralLabel]),
                             url: $listUrl,
-                            group: 'Resources',
-                            icon: \Filament\Support\Icons\Heroicon::OutlinedListBullet,
+                            group: $resourcesGroup,
+                            icon: Heroicon::OutlinedListBullet,
                         ));
                     }
 
-                    if ($resource::hasPage('create')) {
+                    if ($resource::hasPage('create') && static::resourceCanCreate($resource)) {
                         $createUrl = $resource::getUrl('create', shouldGuessMissingParameters: true);
                         $commands->push(CommandItem::make(
-                            label: "Create {$modelLabel}",
+                            label: __('filament-palette::filament-palette.actions.create', ['label' => $modelLabel]),
                             url: $createUrl,
-                            group: 'Resources',
-                            icon: \Filament\Support\Icons\Heroicon::OutlinedPlus,
+                            group: $resourcesGroup,
+                            icon: Heroicon::OutlinedPlus,
                         ));
                     }
                 } catch (\Throwable $e) {

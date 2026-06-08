@@ -14,6 +14,7 @@ class FilamentPaletteServiceProvider extends PackageServiceProvider
             ->name('filament-palette')
             ->hasConfigFile()
             ->hasViews()
+            ->hasTranslations()
             ->hasCommand(CommandPalettePublishViewsCommand::class);
     }
 }

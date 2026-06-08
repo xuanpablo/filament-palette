@@ -14,7 +14,7 @@ class CommandRegistryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->registry = new CommandRegistry();
+        $this->registry = new CommandRegistry;
     }
 
     public function test_get_all_commands_returns_collection(): void

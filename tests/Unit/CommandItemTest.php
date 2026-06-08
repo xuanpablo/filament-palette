@@ -16,7 +16,7 @@ class CommandItemTest extends TestCase
         $this->assertSame('/dashboard', $item->url);
         $this->assertSame('Navigation', $item->group);
         $this->assertFalse($item->openInNewTab);
-        $this->assertSame(md5('Dashboard' . '/dashboard'), $item->id);
+        $this->assertSame(md5('Dashboard'.'/dashboard'), $item->id);
     }
 
     public function test_make_accepts_group_as_third_argument(): void
@@ -80,6 +80,58 @@ class CommandItemTest extends TestCase
         $this->assertSame('Dashboard', $array['label']);
         $this->assertSame('/dashboard', $array['url']);
         $this->assertSame('Nav', $array['group']);
+    }
+
+    public function test_description_defaults_to_null_and_keywords_to_empty_array(): void
+    {
+        $item = CommandItem::make('Dashboard', '/dashboard');
+
+        $this->assertNull($item->description);
+        $this->assertSame([], $item->keywords);
+    }
+
+    public function test_fluent_description_method(): void
+    {
+        $item = CommandItem::make('Billing', '/billing')->description('Manage invoices and payments');
+
+        $this->assertSame('Manage invoices and payments', $item->description);
+        $this->assertInstanceOf(CommandItem::class, $item);
+    }
+
+    public function test_fluent_keywords_method(): void
+    {
+        $item = CommandItem::make('Billing', '/billing')->keywords(['invoices', 'payments']);
+
+        $this->assertSame(['invoices', 'payments'], $item->keywords);
+        $this->assertInstanceOf(CommandItem::class, $item);
+    }
+
+    public function test_to_array_includes_description_and_keywords(): void
+    {
+        $item = CommandItem::make('Billing', '/billing')
+            ->description('Manage invoices')
+            ->keywords(['invoices', 'payments']);
+
+        $array = $item->toArray();
+
+        $this->assertArrayHasKey('description', $array);
+        $this->assertArrayHasKey('keywords', $array);
+        $this->assertSame('Manage invoices', $array['description']);
+        $this->assertSame(['invoices', 'payments'], $array['keywords']);
+    }
+
+    public function test_description_and_keywords_chain_with_other_fluent_methods(): void
+    {
+        $item = CommandItem::make('Billing', '/billing')
+            ->group('Finance')
+            ->description('Manage invoices')
+            ->keywords(['invoices'])
+            ->openInNewTab();
+
+        $this->assertSame('Finance', $item->group);
+        $this->assertSame('Manage invoices', $item->description);
+        $this->assertSame(['invoices'], $item->keywords);
+        $this->assertTrue($item->openInNewTab);
     }
 
     public function test_same_label_and_url_produce_same_id(): void

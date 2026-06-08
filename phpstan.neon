@@ -1,0 +1,21 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 5
+    paths:
+        - src
+    tmpDir: build/phpstan
+
+    # Filament's PHPDoc is often stricter than its runtime behaviour, so the
+    # package keeps defensive instanceof/is_object/method_exists guards that
+    # PHPStan would otherwise flag as redundant.
+    treatPhpDocTypesAsCertain: false
+
+    ignoreErrors:
+        # Fluent ::make() factories intentionally return `new static()`.
+        - identifier: new.static
+        # view() is given dynamic, package-namespaced view names.
+        - identifier: argument.type
+          path: src
+          message: '#expects view-string\|null#'

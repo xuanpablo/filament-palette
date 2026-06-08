@@ -45,6 +45,36 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Search Placeholder
+    |--------------------------------------------------------------------------
+    | The placeholder text shown in the palette's search input. Leave null to
+    | use the (translatable) package default.
+    */
+    'placeholder' => null,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Show Footer
+    |--------------------------------------------------------------------------
+    | Whether to show the footer with keyboard navigation hints
+    | (arrows to navigate, enter to open, escape to close).
+    */
+    'show_footer' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Recent Commands
+    |--------------------------------------------------------------------------
+    | When enabled, recently used commands are remembered per panel (in the
+    | browser) and shown first while the search is empty. 'recent_limit' caps
+    | how many are kept.
+    */
+    'show_recent' => true,
+
+    'recent_limit' => 5,
+
+    /*
+    |--------------------------------------------------------------------------
     | Include Publish Views Command
     |--------------------------------------------------------------------------
     | When true, adds a "Publish views" option to the command palette. Selecting

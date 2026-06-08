@@ -2,6 +2,7 @@
 
 namespace Xuanpablo\FilamentPalette\Support;
 
+use Filament\Panel;
 use Illuminate\Support\Collection;
 use Xuanpablo\FilamentPalette\Support\Commands\NavigationCommands;
 
@@ -10,7 +11,7 @@ class CommandRegistry
     /**
      * Get all commands
      */
-    public function getCommands(?string $search = null, bool $limit = true, ?\Filament\Panel $panel = null): Collection
+    public function getCommands(?string $search = null, bool $limit = true, ?Panel $panel = null): Collection
     {
         $commands = collect();
 
@@ -59,7 +60,7 @@ class CommandRegistry
     /**
      * Get all commands (no search filter, no limit) for client-side filtering.
      */
-    public function getAllCommands(?\Filament\Panel $panel = null): Collection
+    public function getAllCommands(?Panel $panel = null): Collection
     {
         return $this->getCommands(search: null, limit: false, panel: $panel);
     }

@@ -1,0 +1,47 @@
+# Changelog
+
+All notable changes to `xuanpablo/filament-palette` will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [1.0.0] - 2026-06-09
+
+First release of the `xuanpablo/filament-palette` fork (formerly
+`usamamuneerchaudhary/filament-command-palette`).
+
+### Added
+
+- Fuzzy search with scoring, ranking, and matched-character highlighting.
+- Recent commands, remembered per panel in the browser and shown first.
+- Keyboard navigation: arrow keys with wrap-around, `Home`/`End`, `Enter`, `Esc`,
+  and an on-screen keyboard-hint footer.
+- `CommandItem::description()` and `CommandItem::keywords()` for richer,
+  more discoverable results.
+- Authorization filtering: auto-discovered pages and resources respect
+  `canAccess()` / `canCreate()` and fail closed.
+- SPA navigation via Filament's `wire:navigate`.
+- Accessibility: focus trap, scroll lock, focus restoration, and
+  `prefers-reduced-motion` support.
+- Publishable translations (`filament-palette-translations`) for all UI strings.
+- Config options: `placeholder`, `show_footer`, `show_recent`, `recent_limit`.
+- Lazy loading: commands are fetched when the palette first opens.
+- Tooling: GitHub Actions test matrix, Pint, and PHPStan (level 5).
+
+### Changed
+
+- Rebranded to `xuanpablo/filament-palette` under the `Xuanpablo\FilamentPalette`
+  namespace.
+- Theme-aware UI driven by the panel's primary colour, with a refined light and
+  dark appearance.
+- Requires PHP 8.4+, Filament v5, and Laravel 13.
+
+### Fixed
+
+- Page title fallback previously called the instance method `getTitle()`
+  statically, which errored and was silently swallowed.
+
+[Unreleased]: https://github.com/xuanpablo/filament-palette/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/xuanpablo/filament-palette/releases/tag/v1.0.0
