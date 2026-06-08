@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.1] - 2026-06-09
+
+### Fixed
+
+- Dark mode now applies to the topbar trigger button. Its colours were set via
+  inline `style="…"` while dark mode used Tailwind `dark:` utility *classes* —
+  and inline styles always win, so the `dark:` rules never took effect. Styling
+  moved to a scoped `<style>` block with `.dark` selectors (theme-aware
+  `var(--gray-*)`), matching the rest of the palette. Also dropped non-existent
+  `fi-text-gray-*` icon utilities and made the button label translatable.
+
 ## [2.1.0] - 2026-06-09
 
 ### Changed
@@ -115,7 +126,8 @@ First release of the `xuanpablo/filament-palette` fork (formerly
 - Page title fallback previously called the instance method `getTitle()`
   statically, which errored and was silently swallowed.
 
-[Unreleased]: https://github.com/xuanpablo/filament-palette/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/xuanpablo/filament-palette/compare/v2.1.1...HEAD
+[2.1.1]: https://github.com/xuanpablo/filament-palette/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/xuanpablo/filament-palette/compare/v2.0.2...v2.1.0
 [2.0.2]: https://github.com/xuanpablo/filament-palette/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/xuanpablo/filament-palette/compare/v2.0.0...v2.0.1
