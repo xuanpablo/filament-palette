@@ -17,9 +17,8 @@
 
         .fp-gs-hint {
             position: absolute;
-            inset-block-start: 0;
+            inset-block: 0;
             inset-inline-end: 0.625rem;
-            height: 2.5rem;
             display: inline-flex;
             align-items: center;
             pointer-events: none;
