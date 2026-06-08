@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-06-09
+
 ### Added
 
 - Optional global-search records. With `include_global_search_results` enabled
@@ -144,7 +146,8 @@ First release of the `xuanpablo/filament-palette` fork (formerly
 - Page title fallback previously called the instance method `getTitle()`
   statically, which errored and was silently swallowed.
 
-[Unreleased]: https://github.com/xuanpablo/filament-palette/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/xuanpablo/filament-palette/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/xuanpablo/filament-palette/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/xuanpablo/filament-palette/compare/v2.1.1...v2.2.0
 [2.1.1]: https://github.com/xuanpablo/filament-palette/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/xuanpablo/filament-palette/compare/v2.0.2...v2.1.0
