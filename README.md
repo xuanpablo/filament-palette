@@ -128,6 +128,11 @@ php artisan vendor:publish --tag=filament-palette-translations
 
 Then edit `lang/vendor/filament-palette/{locale}/filament-palette.php`.
 
+Bundled locales: English (`en`), Chinese Simplified (`zh_CN`), Hindi (`hi`),
+Spanish (`es`), Portuguese – Brazil (`pt_BR`), Japanese (`ja`), Russian (`ru`),
+German (`de`), French (`fr`), and Korean (`ko`). Filament picks the active
+locale from `app()->getLocale()`.
+
 ## Requirements
 
 - PHP 8.4+

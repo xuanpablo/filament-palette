@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-06-09
+
+### Added
+
+- Bundled translations for Chinese Simplified (`zh_CN`), Hindi (`hi`), Spanish
+  (`es`), Portuguese – Brazil (`pt_BR`), Japanese (`ja`), Russian (`ru`), German
+  (`de`), French (`fr`), and Korean (`ko`).
+
 ## [1.0.0] - 2026-06-09
 
 First release of the `xuanpablo/filament-palette` fork (formerly
@@ -43,5 +51,6 @@ First release of the `xuanpablo/filament-palette` fork (formerly
 - Page title fallback previously called the instance method `getTitle()`
   statically, which errored and was silently swallowed.
 
-[Unreleased]: https://github.com/xuanpablo/filament-palette/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/xuanpablo/filament-palette/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/xuanpablo/filament-palette/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/xuanpablo/filament-palette/releases/tag/v1.0.0
