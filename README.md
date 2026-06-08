@@ -123,11 +123,31 @@ use Xuanpablo\CommandPalette\Support\CommandItem;
             ->group('Finance')
             ->description('Manage invoices and payments')
             ->keywords(['invoices', 'payments', 'subscriptions']),
+
+        // Action command: dispatches a browser event instead of navigating
+        CommandItem::action('Toggle dark mode', 'toggle-theme', ['mode' => 'dark']),
     ],
 ],
 ```
 
-Available `CommandItem` methods: `->group()`, `->icon()`, `->description()`, `->keywords()`, and `->openInNewTab()`.
+### Action commands
+
+Use `CommandItem::action()` (or `->dispatch()` on any item) to run something
+instead of navigating. Selecting it fires a browser `CustomEvent`; the payload
+arrives as `event.detail`. Listen from JavaScript:
+
+```js
+window.addEventListener('toggle-theme', (e) => { /* e.detail.mode */ });
+```
+
+or, for server-side handling, from a Livewire component:
+
+```php
+#[\Livewire\Attributes\On('toggle-theme')]
+public function toggleTheme(array $detail): void { /* … */ }
+```
+
+Available `CommandItem` methods: `->group()`, `->icon()`, `->description()`, `->keywords()`, `->openInNewTab()`, and `->dispatch()`. Factories: `CommandItem::make($label, $url)` for navigation and `CommandItem::action($label, $event, $data)` for actions.
 
 ## Authorization
 

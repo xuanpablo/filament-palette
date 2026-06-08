@@ -40,7 +40,7 @@ class CommandRegistry
             });
         }
 
-        $commands = $commands->unique(fn (CommandItem $item) => $item->url);
+        $commands = $commands->unique(fn (CommandItem $item) => $item->url ?? $item->id);
 
         $grouped = $commands->groupBy('group');
 

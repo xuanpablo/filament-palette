@@ -183,6 +183,17 @@
                 try { localStorage.setItem(this.storageKey(), JSON.stringify(this.recentIds)); } catch (e) {}
             },
 
+            select(item, event) {
+                if (!item) return;
+                // Action commands dispatch a browser event instead of navigating.
+                if (item.event) {
+                    event?.preventDefault();
+                    window.dispatchEvent(new CustomEvent(item.event, { detail: item.eventData ?? {} }));
+                }
+                this.recordRecent(item.id);
+                this.close();
+            },
+
             escapeChar(ch) {
                 return ch === '&' ? '&amp;' : ch === '<' ? '&lt;' : ch === '>' ? '&gt;' : ch === '"' ? '&quot;' : ch;
             },
@@ -406,14 +417,14 @@
                                 :id="entry.type === 'command' ? 'fp-opt-' + entry.cmdIndex : null"
                                 :data-index="entry.cmdIndex"
                                 :class="{ 'fp-active': entry.cmdIndex === selectedIndex }"
-                                :href="entry.item?.url"
+                                :href="entry.item?.url ?? '#'"
                                 :target="entry.item?.openInNewTab ? '_blank' : null"
                                 :rel="entry.item?.openInNewTab ? 'noopener noreferrer' : null"
-                                x-bind="{ 'wire:navigate': entry.type === 'command' && !entry.item?.openInNewTab }"
+                                x-bind="{ 'wire:navigate': entry.type === 'command' && !entry.item?.event && !entry.item?.openInNewTab }"
                                 role="option"
                                 :aria-selected="entry.cmdIndex === selectedIndex"
                                 x-on:mouseenter="selectedIndex = entry.cmdIndex"
-                                x-on:click="recordRecent(entry.item.id); close()"
+                                x-on:click="select(entry.item, $event)"
                             >
                                 <span class="fp-option-icon" x-html="entry.item?.iconHtml"></span>
                                 <span class="fp-option-text">

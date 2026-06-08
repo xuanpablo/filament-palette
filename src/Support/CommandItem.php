@@ -8,16 +8,19 @@ class CommandItem implements Arrayable
 {
     /**
      * @param  array<int, string>  $keywords
+     * @param  array<string, mixed>  $eventData
      */
     public function __construct(
         public string $id,
         public string $label,
-        public string $url,
+        public ?string $url = null,
         public string $group = 'Navigation',
         public string|\BackedEnum|null $icon = null,
         public bool $openInNewTab = false,
         public ?string $description = null,
         public array $keywords = [],
+        public ?string $event = null,
+        public array $eventData = [],
     ) {}
 
     public static function make(
@@ -34,6 +37,30 @@ class CommandItem implements Arrayable
             group: $group ?? 'Navigation',
             icon: $icon,
             openInNewTab: $openInNewTab,
+        );
+    }
+
+    /**
+     * Create a command that dispatches a browser event instead of navigating.
+     * Listen with window.addEventListener('<event>', e => …) or, for Livewire,
+     * a #[On('<event>')] handler. The payload arrives as the event detail.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public static function action(
+        string $label,
+        string $event,
+        array $data = [],
+        ?string $group = 'Actions',
+        string|\BackedEnum|null $icon = null,
+    ): static {
+        return new static(
+            id: md5($label.$event),
+            label: $label,
+            group: $group ?? 'Actions',
+            icon: $icon,
+            event: $event,
+            eventData: $data,
         );
     }
 
@@ -76,6 +103,17 @@ class CommandItem implements Arrayable
     }
 
     /**
+     * @param  array<string, mixed>  $data
+     */
+    public function dispatch(string $event, array $data = []): static
+    {
+        $this->event = $event;
+        $this->eventData = $data;
+
+        return $this;
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function toArray(): array
@@ -89,6 +127,8 @@ class CommandItem implements Arrayable
             'openInNewTab' => $this->openInNewTab,
             'description' => $this->description,
             'keywords' => $this->keywords,
+            'event' => $this->event,
+            'eventData' => $this->eventData,
         ];
     }
 }

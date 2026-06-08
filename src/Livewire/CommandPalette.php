@@ -38,7 +38,10 @@ class CommandPalette extends Component
         }
 
         return $commands->map(function (CommandItem $item): array {
-            $icon = $item->icon ?? Heroicon::OutlinedArrowTopRightOnSquare;
+            $default = $item->event !== null
+                ? Heroicon::OutlinedBolt
+                : Heroicon::OutlinedArrowTopRightOnSquare;
+            $icon = $item->icon ?? $default;
             $iconHtml = \Filament\Support\generate_icon_html($icon, size: IconSize::ExtraSmall);
 
             return [
@@ -50,6 +53,8 @@ class CommandPalette extends Component
                 'openInNewTab' => $item->openInNewTab,
                 'description' => $item->description,
                 'keywords' => array_values($item->keywords),
+                'event' => $item->event,
+                'eventData' => (object) $item->eventData,
             ];
         })->values()->all();
     }

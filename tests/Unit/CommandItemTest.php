@@ -90,6 +90,53 @@ class CommandItemTest extends TestCase
         $this->assertSame([], $item->keywords);
     }
 
+    public function test_navigation_item_has_no_event(): void
+    {
+        $item = CommandItem::make('Dashboard', '/dashboard');
+
+        $this->assertSame('/dashboard', $item->url);
+        $this->assertNull($item->event);
+        $this->assertSame([], $item->eventData);
+    }
+
+    public function test_action_factory_creates_event_command(): void
+    {
+        $item = CommandItem::action('Toggle theme', 'toggle-theme', ['mode' => 'dark']);
+
+        $this->assertNull($item->url);
+        $this->assertSame('toggle-theme', $item->event);
+        $this->assertSame(['mode' => 'dark'], $item->eventData);
+        $this->assertSame('Actions', $item->group);
+        $this->assertSame(md5('Toggle theme'.'toggle-theme'), $item->id);
+    }
+
+    public function test_action_factory_accepts_custom_group_and_icon(): void
+    {
+        $item = CommandItem::action('Log out', 'logout', group: 'Account', icon: 'heroicon-o-power');
+
+        $this->assertSame('Account', $item->group);
+        $this->assertSame('heroicon-o-power', $item->icon);
+    }
+
+    public function test_fluent_dispatch_turns_item_into_an_action(): void
+    {
+        $item = CommandItem::make('Refresh', '#')->dispatch('refresh-data', ['scope' => 'all']);
+
+        $this->assertSame('refresh-data', $item->event);
+        $this->assertSame(['scope' => 'all'], $item->eventData);
+        $this->assertInstanceOf(CommandItem::class, $item);
+    }
+
+    public function test_to_array_includes_event_and_event_data(): void
+    {
+        $array = CommandItem::action('Toggle theme', 'toggle-theme', ['mode' => 'dark'])->toArray();
+
+        $this->assertArrayHasKey('event', $array);
+        $this->assertArrayHasKey('eventData', $array);
+        $this->assertSame('toggle-theme', $array['event']);
+        $this->assertSame(['mode' => 'dark'], $array['eventData']);
+    }
+
     public function test_fluent_description_method(): void
     {
         $item = CommandItem::make('Billing', '/billing')->description('Manage invoices and payments');

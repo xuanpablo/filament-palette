@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Action commands. `CommandItem::action($label, $event, $data)` (and `->dispatch()`
+  on any item) create a command that fires a browser `CustomEvent` instead of
+  navigating — the payload arrives as `event.detail`. Listen via
+  `window.addEventListener(...)` or a Livewire `#[On(...)]` handler. Useful for
+  toggling theme, logging out, opening modals, or any custom action.
+
 ## [2.1.1] - 2026-06-09
 
 ### Fixed
