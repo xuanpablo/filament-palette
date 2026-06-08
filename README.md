@@ -48,6 +48,24 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Upgrading from 1.x to 2.0
+
+The package name is unchanged (`xuanpablo/filament-palette`), but the PHP
+namespace and entry-point classes were renamed. Update your imports:
+
+```diff
+- use Xuanpablo\FilamentPalette\FilamentPalettePlugin;
++ use Xuanpablo\CommandPalette\CommandPalettePlugin;
+
+- ->plugins([FilamentPalettePlugin::make()])
++ ->plugins([CommandPalettePlugin::make()])
+```
+
+If you reference other classes (e.g. `CommandItem`), swap the namespace prefix
+`Xuanpablo\FilamentPalette\` → `Xuanpablo\CommandPalette\`. The config file/key,
+view namespace, publish tags, and translations are unchanged, so published
+config and views need no changes.
+
 ## Configuration
 
 Publish the config file (optional):
