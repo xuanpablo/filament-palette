@@ -43,14 +43,14 @@
             font-size: 0.6875rem;
             line-height: 1;
             border-radius: 0.3125rem;
-            border: 1px solid rgb(229 231 235);
-            background: rgb(255 255 255);
-            color: rgb(107 114 128);
+            border: 1px solid var(--gray-200, #e5e7eb);
+            background: white;
+            color: var(--gray-500, #6b7280);
             transition: color 0.15s, border-color 0.15s;
         }
-        .fp-gs-hint button:hover kbd { color: rgb(var(--primary-600, 37 99 235)); border-color: rgb(var(--primary-400, 96 165 250)); }
-        .dark .fp-gs-hint kbd { border-color: rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.05); color: rgb(209 213 219); }
-        .dark .fp-gs-hint button:hover kbd { color: rgb(var(--primary-400, 96 165 250)); }
+        .fp-gs-hint button:hover kbd { color: var(--primary-600, #2563eb); border-color: var(--primary-400, #60a5fa); }
+        .dark .fp-gs-hint kbd { border-color: rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.05); color: var(--gray-300, #d1d5db); }
+        .dark .fp-gs-hint button:hover kbd { color: var(--primary-400, #60a5fa); }
     </style>
 
     <div class="fp-gs-hint" x-data="{}">

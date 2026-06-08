@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-06-09
+
+### Fixed
+
+- The palette is now fully theme-aware. Neutral colours use Filament's `--gray-*`
+  variables and the accent uses `--primary-*` directly (Filament v5 exposes these
+  as full colours, consumed as `var(--…)`). Previously the accent used the v3/v4
+  `rgb(var(--primary-600))` channel syntax, which is invalid in v5 and silently
+  fell back to a hardcoded blue. The palette now matches the panel's primary and
+  gray theme in both light and dark mode. Neutral translucent overlays
+  (backdrop, subtle hovers) remain untinted by design.
+
 ## [2.0.0] - 2026-06-09
 
 ### Changed
@@ -84,7 +96,8 @@ First release of the `xuanpablo/filament-palette` fork (formerly
 - Page title fallback previously called the instance method `getTitle()`
   statically, which errored and was silently swallowed.
 
-[Unreleased]: https://github.com/xuanpablo/filament-palette/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/xuanpablo/filament-palette/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/xuanpablo/filament-palette/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/xuanpablo/filament-palette/compare/v1.1.2...v2.0.0
 [1.1.2]: https://github.com/xuanpablo/filament-palette/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/xuanpablo/filament-palette/compare/v1.1.0...v1.1.1
