@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-06-09
+
+### Fixed
+
+- Vertically centre the `⌘K` hint within Filament's global-search field. It used
+  a fixed `height: 2.5rem` pinned to the top, which overflowed Filament v5's
+  ~36px input and sat slightly low. It now spans the field height
+  (`inset-block: 0`) and flex-centres, independent of the input's height.
+
 ## [2.0.1] - 2026-06-09
 
 ### Fixed
@@ -96,7 +105,8 @@ First release of the `xuanpablo/filament-palette` fork (formerly
 - Page title fallback previously called the instance method `getTitle()`
   statically, which errored and was silently swallowed.
 
-[Unreleased]: https://github.com/xuanpablo/filament-palette/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/xuanpablo/filament-palette/compare/v2.0.2...HEAD
+[2.0.2]: https://github.com/xuanpablo/filament-palette/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/xuanpablo/filament-palette/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/xuanpablo/filament-palette/compare/v1.1.2...v2.0.0
 [1.1.2]: https://github.com/xuanpablo/filament-palette/compare/v1.1.1...v1.1.2
