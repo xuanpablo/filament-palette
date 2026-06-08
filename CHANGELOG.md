@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Optional global-search records. With `include_global_search_results` enabled
+  (and a global search provider on the panel), matching records are fetched as
+  you type — via a debounced `$wire` round-trip — and shown under their category
+  alongside commands. Off by default; tunable via `global_search_results_limit`
+  and `global_search_debounce_ms`.
+
 ## [2.2.0] - 2026-06-09
 
 ### Added

@@ -6,6 +6,8 @@ use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 use Xuanpablo\CommandPalette\Support\CommandItem;
@@ -59,6 +61,77 @@ class CommandPalette extends Component
         })->values()->all();
     }
 
+    /**
+     * Fetch matching records from the panel's global search provider. Called
+     * lazily (debounced) from the browser as the user types. Returns [] when the
+     * feature is disabled, the query is too short, or no provider exists.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function searchRecords(string $query): array
+    {
+        if (! (bool) config('filament-palette.include_global_search_results', false)) {
+            return [];
+        }
+
+        $query = trim($query);
+
+        if (mb_strlen($query) < 2) {
+            return [];
+        }
+
+        try {
+            $results = $this->resolvePanel()?->getGlobalSearchProvider()?->getResults($query);
+
+            if ($results === null) {
+                return [];
+            }
+
+            $iconHtml = \Filament\Support\generate_icon_html(Heroicon::OutlinedMagnifyingGlass, size: IconSize::ExtraSmall)?->toHtml() ?? '';
+            $limit = (int) config('filament-palette.global_search_results_limit', 10);
+
+            $out = [];
+
+            foreach ($results->getCategories() as $category => $items) {
+                $items = $items instanceof Arrayable ? $items->toArray() : $items;
+
+                foreach ($items as $result) {
+                    $title = $result->title instanceof Htmlable
+                        ? strip_tags($result->title->toHtml())
+                        : (string) $result->title;
+
+                    $description = collect($result->details)
+                        ->map(fn ($value): string => is_string($value) ? $value : '')
+                        ->filter()
+                        ->implode(' · ');
+
+                    $out[] = [
+                        'id' => 'gs:'.md5($category.$result->url.$title),
+                        'label' => $title,
+                        'url' => $result->url,
+                        'group' => (string) $category,
+                        'iconHtml' => $iconHtml,
+                        'openInNewTab' => false,
+                        'description' => $description !== '' ? $description : null,
+                        'keywords' => [],
+                        'event' => null,
+                        'eventData' => (object) [],
+                    ];
+
+                    if (count($out) >= $limit) {
+                        return $out;
+                    }
+                }
+            }
+
+            return $out;
+        } catch (\Throwable $e) {
+            report($e);
+
+            return [];
+        }
+    }
+
     public function render(): View
     {
         return view('filament-palette::livewire.command-palette', [
@@ -68,6 +141,8 @@ class CommandPalette extends Component
             'showRecent' => (bool) config('filament-palette.show_recent', true),
             'recentLimit' => (int) config('filament-palette.recent_limit', 5),
             'recentLabel' => __('filament-palette::filament-palette.recent'),
+            'includeRecords' => (bool) config('filament-palette.include_global_search_results', false),
+            'recordsDebounce' => (int) config('filament-palette.global_search_debounce_ms', 300),
             'paletteKey' => $this->resolvePanel()?->getId() ?? 'default',
         ]);
     }

@@ -84,6 +84,7 @@ Options in `config/filament-palette.php`:
 - `show_footer`: Show the keyboard-hint footer (default: `true`)
 - `show_recent`: Remember and surface recently used commands (default: `true`)
 - `recent_limit`: How many recent commands to keep (default: `5`)
+- `include_global_search_results`: Also show matching records from the panel's global search provider as you type (default: `false`). Adds a debounced server round-trip per search; requires a global search provider. Tune with `global_search_results_limit` (default `10`) and `global_search_debounce_ms` (default `300`).
 - `include_publish_views_command`: Show "Publish views" in the command palette (default: `true`)
 - `custom_commands`: Array of closures returning `CommandItem[]` for extensibility
 

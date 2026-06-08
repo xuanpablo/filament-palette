@@ -63,6 +63,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Global Search Results
+    |--------------------------------------------------------------------------
+    | When enabled (and the panel has a global search provider), matching
+    | records are fetched as you type and shown alongside commands. This adds a
+    | debounced server round-trip per search, so it is off by default.
+    */
+    'include_global_search_results' => false,
+
+    'global_search_results_limit' => 10,
+
+    'global_search_debounce_ms' => 300,
+
+    /*
+    |--------------------------------------------------------------------------
     | Recent Commands
     |--------------------------------------------------------------------------
     | When enabled, recently used commands are remembered per panel (in the

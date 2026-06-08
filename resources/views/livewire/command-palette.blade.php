@@ -8,6 +8,8 @@
         'showRecent' => (bool) $showRecent,
         'recentLabel' => $recentLabel,
         'paletteKey' => $paletteKey,
+        'includeRecords' => (bool) $includeRecords,
+        'recordsDebounce' => (int) $recordsDebounce,
     ];
 @endphp
 
@@ -133,6 +135,11 @@
             showRecent: config.showRecent,
             recentLabel: config.recentLabel,
             paletteKey: config.paletteKey,
+            includeRecords: config.includeRecords,
+            recordsDebounce: config.recordsDebounce,
+            records: [],
+            recordsTimer: null,
+            recordsLoading: false,
             selectedIndex: 0,
             isOpen: false,
             loaded: false,
@@ -140,7 +147,25 @@
 
             init() {
                 this.loadRecent();
-                this.$watch('search', () => { this.selectedIndex = 0; this.$nextTick(() => this.scrollActiveIntoView()); });
+                this.$watch('search', () => {
+                    this.selectedIndex = 0;
+                    this.fetchRecords();
+                    this.$nextTick(() => this.scrollActiveIntoView());
+                });
+            },
+
+            fetchRecords() {
+                if (! this.includeRecords) return;
+                clearTimeout(this.recordsTimer);
+                const q = this.search.trim();
+                if (q.length < 2) { this.records = []; this.recordsLoading = false; return; }
+                this.recordsLoading = true;
+                this.recordsTimer = setTimeout(() => {
+                    Promise.resolve(this.$wire.searchRecords(q))
+                        .then(r => { if (q === this.search.trim()) this.records = Array.isArray(r) ? r : []; })
+                        .catch(() => { this.records = []; })
+                        .finally(() => { this.recordsLoading = false; });
+                }, this.recordsDebounce);
             },
 
             open() {
@@ -277,6 +302,17 @@
                         out.push({ type: 'header', group: g });
                         for (const e of grouped[g]) push(e.c, e.indices);
                     }
+
+                    // Records from the panel's global search (server-fetched, debounced).
+                    if (this.records.length) {
+                        const recordGroups = {};
+                        for (const r of this.records) (recordGroups[r.group] ??= []).push(r);
+                        for (const g of Object.keys(recordGroups)) {
+                            out.push({ type: 'header', group: g });
+                            for (const r of recordGroups[g]) push(r, this.fuzzy(q, r.label)?.indices ?? []);
+                        }
+                    }
+
                     return out;
                 }
 
@@ -397,7 +433,7 @@
                     </div>
                 </template>
 
-                <template x-if="! loading && commandCount === 0">
+                <template x-if="! loading && ! recordsLoading && commandCount === 0">
                     <div class="fp-empty">
                         <svg class="fp-empty-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
