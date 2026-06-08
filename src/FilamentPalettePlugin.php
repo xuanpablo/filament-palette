@@ -32,8 +32,15 @@ class FilamentPalettePlugin implements Plugin
         }
 
         if (config('filament-palette.show_topbar_button', true)) {
+            // Standalone trigger button, shown when global search is disabled.
             $panel->renderHook(PanelsRenderHook::GLOBAL_SEARCH_BEFORE, function (): string {
                 return view('filament-palette::hooks.topbar-trigger')->render();
+            });
+
+            // Compact hint embedded in Filament's global-search field, shown when
+            // global search is enabled (this hook only renders with the field).
+            $panel->renderHook(PanelsRenderHook::GLOBAL_SEARCH_END, function (): string {
+                return view('filament-palette::hooks.global-search-hint')->render();
             });
         }
     }

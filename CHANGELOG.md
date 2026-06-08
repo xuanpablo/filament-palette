@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-06-09
+
+### Fixed
+
+- The topbar trigger no longer disappears when Filament global search is enabled.
+  A compact `⌘K` hint is now embedded in the global-search field (via the
+  `GLOBAL_SEARCH_END` render hook); set
+  `show_topbar_button_when_global_search_enabled` to `true` to show the full
+  standalone button instead.
+
 ## [1.1.0] - 2026-06-09
 
 ### Added
@@ -51,6 +61,7 @@ First release of the `xuanpablo/filament-palette` fork (formerly
 - Page title fallback previously called the instance method `getTitle()`
   statically, which errored and was silently swallowed.
 
-[Unreleased]: https://github.com/xuanpablo/filament-palette/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/xuanpablo/filament-palette/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/xuanpablo/filament-palette/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/xuanpablo/filament-palette/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/xuanpablo/filament-palette/releases/tag/v1.0.0

@@ -59,7 +59,8 @@ php artisan vendor:publish --tag=filament-palette-config
 Options in `config/filament-palette.php`:
 
 - `key_bindings`: Keyboard shortcuts (default: `['mod+k']`)
-- `show_topbar_button`: Show optional trigger in topbar (default: `true`)
+- `show_topbar_button`: Show a trigger affordance in the topbar (default: `true`). When global search is **disabled** this is a full search-style button; when global search is **enabled** it becomes a compact `⌘K` hint embedded in Filament's global-search field.
+- `show_topbar_button_when_global_search_enabled`: Show the full standalone button (instead of the compact hint) even when global search is enabled, giving two side-by-side controls (default: `false`)
 - `max_results`: Max results shown while searching (default: `10`)
 - `placeholder`: Search input placeholder text (default: `null`, falls back to the translatable default)
 - `show_footer`: Show the keyboard-hint footer (default: `true`)
