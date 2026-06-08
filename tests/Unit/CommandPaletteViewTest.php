@@ -37,7 +37,19 @@ class CommandPaletteViewTest extends TestCase
             1,
             substr_count($attribute, '"'),
             'A raw double-quote inside the x-data attribute truncates it and breaks Alpine. '
-                .'Use String.fromCharCode(34) or \\u0022 instead, and avoid " in comments.'
+                .'Keep the state in the Alpine.data() component (in <script>), not inline.'
         );
+    }
+
+    /**
+     * State must live in a registered Alpine.data component referenced from a
+     * tiny x-data call — not as a large inline object in the attribute.
+     */
+    public function test_state_is_registered_as_an_alpine_data_component(): void
+    {
+        $blade = $this->blade();
+
+        $this->assertStringContainsString("Alpine.data('commandPalette'", $blade, 'Alpine component is not registered.');
+        $this->assertStringContainsString('x-data="commandPalette(', $blade, 'x-data does not reference the registered component.');
     }
 }

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Hardened the palette internals: the Alpine state and logic are now a registered
+  `Alpine.data('commandPalette', …)` component (injected once per page via
+  Livewire `@assets`) instead of a large inline `x-data` object, removing the
+  HTML-attribute escaping fragility behind the v1.1.2 bug. Theme-aware colours
+  and behaviour are unchanged; no public-API changes.
+
 ## [2.0.2] - 2026-06-09
 
 ### Fixed

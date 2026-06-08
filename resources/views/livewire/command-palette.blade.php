@@ -1,8 +1,17 @@
 @php
     $keyBindings = config('filament-palette.key_bindings', ['mod+k']);
     $mousetrapBindings = collect($keyBindings)->map(fn (string $key): string => str_replace('+', '-', $key))->implode('.');
+
+    $jsConfig = [
+        'maxResults' => (int) $maxResults,
+        'recentLimit' => (int) $recentLimit,
+        'showRecent' => (bool) $showRecent,
+        'recentLabel' => $recentLabel,
+        'paletteKey' => $paletteKey,
+    ];
 @endphp
 
+@assets
 <style>
     .fp-palette [x-cloak] { display: none !important; }
 
@@ -105,203 +114,215 @@
     .dark kbd.fp-kbd { border-color: rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.05); color: var(--gray-300, #d1d5db); }
 </style>
 
-<div
-    class="fp-palette"
-    x-data="{
-        commands: [],
-        recentIds: [],
-        search: '',
-        maxResults: {{ $maxResults }},
-        recentLimit: {{ $recentLimit }},
-        showRecent: {{ $showRecent ? 'true' : 'false' }},
-        recentLabel: @js($recentLabel),
-        paletteKey: @js($paletteKey),
-        selectedIndex: 0,
-        isOpen: false,
-        loaded: false,
-        loading: false,
+<script>
+    // Registered as an Alpine component (rather than an inline x-data object) so
+    // the state/logic lives in a <script>, not an HTML attribute. This removes a
+    // whole class of attribute-escaping bugs (e.g. a raw " truncating x-data).
+    document.addEventListener('alpine:init', () => {
+        if (window.Alpine?.data === undefined || window.__commandPaletteRegistered) {
+            return;
+        }
+        window.__commandPaletteRegistered = true;
 
-        init() {
-            this.loadRecent();
-            this.$watch('search', () => { this.selectedIndex = 0; this.$nextTick(() => this.scrollActiveIntoView()); });
-        },
+        Alpine.data('commandPalette', (config) => ({
+            commands: [],
+            recentIds: [],
+            search: '',
+            maxResults: config.maxResults,
+            recentLimit: config.recentLimit,
+            showRecent: config.showRecent,
+            recentLabel: config.recentLabel,
+            paletteKey: config.paletteKey,
+            selectedIndex: 0,
+            isOpen: false,
+            loaded: false,
+            loading: false,
 
-        open() {
-            this.isOpen = true;
-            this.search = '';
-            this.selectedIndex = 0;
-            this.loadRecent();
-            this.fetchCommands();
-            this.$nextTick(() => this.$refs.searchInput?.focus());
-        },
+            init() {
+                this.loadRecent();
+                this.$watch('search', () => { this.selectedIndex = 0; this.$nextTick(() => this.scrollActiveIntoView()); });
+            },
 
-        fetchCommands() {
-            // Commands are loaded lazily on first open, then cached client-side.
-            if (this.loaded || this.loading) {
-                return;
-            }
-            this.loading = true;
-            Promise.resolve(this.$wire.loadCommands())
-                .then(commands => { this.commands = Array.isArray(commands) ? commands : []; this.loaded = true; })
-                .catch(() => { this.commands = []; })
-                .finally(() => { this.loading = false; });
-        },
+            open() {
+                this.isOpen = true;
+                this.search = '';
+                this.selectedIndex = 0;
+                this.loadRecent();
+                this.fetchCommands();
+                this.$nextTick(() => this.$refs.searchInput?.focus());
+            },
 
-        close() { this.isOpen = false; },
-
-        storageKey() { return 'filament-palette:recent:' + this.paletteKey; },
-
-        loadRecent() {
-            try { this.recentIds = JSON.parse(localStorage.getItem(this.storageKey()) || '[]'); }
-            catch (e) { this.recentIds = []; }
-        },
-
-        recentCommands() {
-            const byId = new Map(this.commands.map(c => [c.id, c]));
-            return this.recentIds.map(id => byId.get(id)).filter(Boolean).slice(0, this.recentLimit);
-        },
-
-        recordRecent(id) {
-            this.recentIds = [id, ...this.recentIds.filter(x => x !== id)].slice(0, this.recentLimit);
-            try { localStorage.setItem(this.storageKey(), JSON.stringify(this.recentIds)); } catch (e) {}
-        },
-
-        escapeChar(ch) {
-            // Compare via char code (34) so no raw double-quote character ever
-            // appears inside this double-quoted x-data attribute, which would
-            // otherwise close the attribute early and break the component.
-            return ch === '&' ? '&amp;' : ch === '<' ? '&lt;' : ch === '>' ? '&gt;' : ch === String.fromCharCode(34) ? '&quot;' : ch;
-        },
-
-        escape(str) {
-            let out = '';
-            for (const ch of String(str)) out += this.escapeChar(ch);
-            return out;
-        },
-
-        highlight(label, indices) {
-            if (!indices || !indices.length) return this.escape(label);
-            const set = new Set(indices);
-            let out = '';
-            for (let i = 0; i < label.length; i++) {
-                const ch = this.escapeChar(label[i]);
-                out += set.has(i) ? '<span class=\'fp-match\'>' + ch + '</span>' : ch;
-            }
-            return out;
-        },
-
-        fuzzy(query, text) {
-            if (!query) return { score: 0, indices: [] };
-            const q = query.toLowerCase();
-            const t = String(text || '').toLowerCase();
-            const indices = [];
-            let qi = 0, score = 0, run = 0, last = -2;
-            for (let ti = 0; ti < t.length && qi < q.length; ti++) {
-                if (t[ti] === q[qi]) {
-                    indices.push(ti);
-                    let bonus = 1;
-                    if (ti === last + 1) { run++; bonus += run * 4; } else { run = 0; }
-                    const prev = ti > 0 ? t[ti - 1] : ' ';
-                    if (/[\s\-_/.]/.test(prev)) bonus += 10;
-                    if (ti === 0) bonus += 15;
-                    score += bonus;
-                    last = ti;
-                    qi++;
+            fetchCommands() {
+                // Commands are loaded lazily on first open, then cached client-side.
+                if (this.loaded || this.loading) {
+                    return;
                 }
-            }
-            if (qi < q.length) return null;
-            score -= (t.length - indices.length) * 0.1;
-            return { score, indices };
-        },
+                this.loading = true;
+                Promise.resolve(this.$wire.loadCommands())
+                    .then(commands => { this.commands = Array.isArray(commands) ? commands : []; this.loaded = true; })
+                    .catch(() => { this.commands = []; })
+                    .finally(() => { this.loading = false; });
+            },
 
-        scoreItem(item, q) {
-            let best = null, labelIndices = [];
-            const lab = this.fuzzy(q, item.label);
-            if (lab) { best = lab.score * 2; labelIndices = lab.indices; }
-            for (const kw of (item.keywords || [])) {
-                const m = this.fuzzy(q, kw);
-                if (m) best = Math.max(best ?? -Infinity, m.score * 1.2);
-            }
-            const g = this.fuzzy(q, item.group);
-            if (g) best = Math.max(best ?? -Infinity, g.score * 0.8);
-            if (item.description) {
-                const d = this.fuzzy(q, item.description);
-                if (d) best = Math.max(best ?? -Infinity, d.score * 0.6);
-            }
-            if (best === null) return null;
-            return { score: best, indices: labelIndices };
-        },
+            close() { this.isOpen = false; },
 
-        get results() {
-            const q = this.search.trim();
-            const out = [];
-            let cmdIndex = 0;
-            const push = (item, indices) => out.push({ type: 'command', cmdIndex: cmdIndex++, item, hl: this.highlight(item.label, indices) });
+            storageKey() { return 'filament-palette:recent:' + this.paletteKey; },
 
-            if (q) {
-                const scored = [];
-                for (const c of this.commands) {
-                    const s = this.scoreItem(c, q);
-                    if (s) scored.push({ c, score: s.score, indices: s.indices });
-                }
-                scored.sort((a, b) => b.score - a.score || a.c.label.localeCompare(b.c.label));
-                const capped = scored.slice(0, this.maxResults);
-                const grouped = {};
-                for (const e of capped) (grouped[e.c.group] ??= []).push(e);
-                for (const g of Object.keys(grouped)) {
-                    out.push({ type: 'header', group: g });
-                    for (const e of grouped[g]) push(e.c, e.indices);
+            loadRecent() {
+                try { this.recentIds = JSON.parse(localStorage.getItem(this.storageKey()) || '[]'); }
+                catch (e) { this.recentIds = []; }
+            },
+
+            recentCommands() {
+                const byId = new Map(this.commands.map(c => [c.id, c]));
+                return this.recentIds.map(id => byId.get(id)).filter(Boolean).slice(0, this.recentLimit);
+            },
+
+            recordRecent(id) {
+                this.recentIds = [id, ...this.recentIds.filter(x => x !== id)].slice(0, this.recentLimit);
+                try { localStorage.setItem(this.storageKey(), JSON.stringify(this.recentIds)); } catch (e) {}
+            },
+
+            escapeChar(ch) {
+                return ch === '&' ? '&amp;' : ch === '<' ? '&lt;' : ch === '>' ? '&gt;' : ch === '"' ? '&quot;' : ch;
+            },
+
+            escape(str) {
+                let out = '';
+                for (const ch of String(str)) out += this.escapeChar(ch);
+                return out;
+            },
+
+            highlight(label, indices) {
+                if (!indices || !indices.length) return this.escape(label);
+                const set = new Set(indices);
+                let out = '';
+                for (let i = 0; i < label.length; i++) {
+                    const ch = this.escapeChar(label[i]);
+                    out += set.has(i) ? '<span class="fp-match">' + ch + '</span>' : ch;
                 }
                 return out;
-            }
+            },
 
-            const recents = this.showRecent ? this.recentCommands() : [];
-            const recentSet = new Set(recents.map(c => c.id));
-            if (recents.length) {
-                out.push({ type: 'header', group: this.recentLabel });
-                for (const c of recents) push(c, []);
-            }
-            const grouped = {};
-            for (const c of this.commands) {
-                if (recentSet.has(c.id)) continue;
-                (grouped[c.group] ??= []).push(c);
-            }
-            for (const g of Object.keys(grouped)) {
-                out.push({ type: 'header', group: g });
-                for (const c of grouped[g]) push(c, []);
-            }
-            return out;
-        },
+            fuzzy(query, text) {
+                if (!query) return { score: 0, indices: [] };
+                const q = query.toLowerCase();
+                const t = String(text || '').toLowerCase();
+                const indices = [];
+                let qi = 0, score = 0, run = 0, last = -2;
+                for (let ti = 0; ti < t.length && qi < q.length; ti++) {
+                    if (t[ti] === q[qi]) {
+                        indices.push(ti);
+                        let bonus = 1;
+                        if (ti === last + 1) { run++; bonus += run * 4; } else { run = 0; }
+                        const prev = ti > 0 ? t[ti - 1] : ' ';
+                        if (/[\s\-_/.]/.test(prev)) bonus += 10;
+                        if (ti === 0) bonus += 15;
+                        score += bonus;
+                        last = ti;
+                        qi++;
+                    }
+                }
+                if (qi < q.length) return null;
+                score -= (t.length - indices.length) * 0.1;
+                return { score, indices };
+            },
 
-        get commandCount() {
-            return this.results.filter(e => e.type === 'command').length;
-        },
+            scoreItem(item, q) {
+                let best = null, labelIndices = [];
+                const lab = this.fuzzy(q, item.label);
+                if (lab) { best = lab.score * 2; labelIndices = lab.indices; }
+                for (const kw of (item.keywords || [])) {
+                    const m = this.fuzzy(q, kw);
+                    if (m) best = Math.max(best ?? -Infinity, m.score * 1.2);
+                }
+                const g = this.fuzzy(q, item.group);
+                if (g) best = Math.max(best ?? -Infinity, g.score * 0.8);
+                if (item.description) {
+                    const d = this.fuzzy(q, item.description);
+                    if (d) best = Math.max(best ?? -Infinity, d.score * 0.6);
+                }
+                if (best === null) return null;
+                return { score: best, indices: labelIndices };
+            },
 
-        move(delta) {
-            const count = this.commandCount;
-            if (count === 0) return;
-            this.selectedIndex = (this.selectedIndex + delta + count) % count;
-            this.scrollActiveIntoView();
-        },
+            get results() {
+                const q = this.search.trim();
+                const out = [];
+                let cmdIndex = 0;
+                const push = (item, indices) => out.push({ type: 'command', cmdIndex: cmdIndex++, item, hl: this.highlight(item.label, indices) });
 
-        toEdge(index) {
-            const count = this.commandCount;
-            if (count === 0) return;
-            this.selectedIndex = index < 0 ? count - 1 : 0;
-            this.scrollActiveIntoView();
-        },
+                if (q) {
+                    const scored = [];
+                    for (const c of this.commands) {
+                        const s = this.scoreItem(c, q);
+                        if (s) scored.push({ c, score: s.score, indices: s.indices });
+                    }
+                    scored.sort((a, b) => b.score - a.score || a.c.label.localeCompare(b.c.label));
+                    const capped = scored.slice(0, this.maxResults);
+                    const grouped = {};
+                    for (const e of capped) (grouped[e.c.group] ??= []).push(e);
+                    for (const g of Object.keys(grouped)) {
+                        out.push({ type: 'header', group: g });
+                        for (const e of grouped[g]) push(e.c, e.indices);
+                    }
+                    return out;
+                }
 
-        scrollActiveIntoView() {
-            this.$nextTick(() => {
-                this.$refs.results?.querySelector('[data-index=\'' + this.selectedIndex + '\']')?.scrollIntoView({ block: 'nearest' });
-            });
-        },
+                const recents = this.showRecent ? this.recentCommands() : [];
+                const recentSet = new Set(recents.map(c => c.id));
+                if (recents.length) {
+                    out.push({ type: 'header', group: this.recentLabel });
+                    for (const c of recents) push(c, []);
+                }
+                const grouped = {};
+                for (const c of this.commands) {
+                    if (recentSet.has(c.id)) continue;
+                    (grouped[c.group] ??= []).push(c);
+                }
+                for (const g of Object.keys(grouped)) {
+                    out.push({ type: 'header', group: g });
+                    for (const c of grouped[g]) push(c, []);
+                }
+                return out;
+            },
 
-        choose() {
-            const el = this.$refs.results?.querySelector('[data-index=\'' + this.selectedIndex + '\']');
-            if (el) el.click();
-        },
-    }"
+            get commandCount() {
+                return this.results.filter(e => e.type === 'command').length;
+            },
+
+            move(delta) {
+                const count = this.commandCount;
+                if (count === 0) return;
+                this.selectedIndex = (this.selectedIndex + delta + count) % count;
+                this.scrollActiveIntoView();
+            },
+
+            toEdge(index) {
+                const count = this.commandCount;
+                if (count === 0) return;
+                this.selectedIndex = index < 0 ? count - 1 : 0;
+                this.scrollActiveIntoView();
+            },
+
+            scrollActiveIntoView() {
+                this.$nextTick(() => {
+                    this.$refs.results?.querySelector('[data-index="' + this.selectedIndex + '"]')?.scrollIntoView({ block: 'nearest' });
+                });
+            },
+
+            choose() {
+                const el = this.$refs.results?.querySelector('[data-index="' + this.selectedIndex + '"]');
+                if (el) el.click();
+            },
+        }));
+    });
+</script>
+@endassets
+
+<div
+    class="fp-palette"
+    x-data="commandPalette(@js($jsConfig))"
     x-mousetrap.global.{{ $mousetrapBindings }}="open()"
     x-on:open-command-palette.window="open()"
     x-on:keydown.escape.window="close()"
