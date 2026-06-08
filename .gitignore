@@ -3,3 +3,7 @@ vendor
 .phpunit.result.cache
 build
 composer.lock
+node_modules
+package-lock.json
+/test-results
+/playwright-report

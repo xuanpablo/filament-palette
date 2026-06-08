@@ -8,8 +8,11 @@
          stopOnFailure="false"
          colors="true">
     <testsuites>
-        <testsuite name="Filament Palette test suite">
-            <directory suffix="Test.php">./tests</directory>
+        <testsuite name="default">
+            <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+        <testsuite name="browser">
+            <directory suffix="Test.php">./tests/Browser</directory>
         </testsuite>
     </testsuites>
     <source>

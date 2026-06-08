@@ -42,10 +42,13 @@
         "orchestra/testbench": "^11.0",
         "phpunit/phpunit": "^11.0|^12.0",
         "laravel/pint": "^1.18",
-        "larastan/larastan": "^3.0"
+        "larastan/larastan": "^3.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-browser": "^4.0"
     },
     "scripts": {
-        "test": "vendor/bin/phpunit",
+        "test": "vendor/bin/pest --testsuite=default",
+        "test:browser": "vendor/bin/pest --testsuite=browser",
         "lint": "vendor/bin/pint",
         "lint:test": "vendor/bin/pint --test",
         "analyse": "vendor/bin/phpstan analyse"
@@ -55,6 +58,11 @@
             "providers": [
                 "Xuanpablo\\CommandPalette\\CommandPaletteServiceProvider"
             ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
         }
     }
 }
