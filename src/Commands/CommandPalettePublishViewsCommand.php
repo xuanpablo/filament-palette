@@ -1,0 +1,28 @@
+<?php
+
+namespace Xuanpablo\FilamentPalette\Commands;
+
+use Illuminate\Console\Command;
+
+class CommandPalettePublishViewsCommand extends Command
+{
+    protected $signature = 'filament-palette:publish-views {--force : Overwrite existing files}';
+
+    protected $description = 'Publish the command palette views for customization';
+
+    public function handle(): int
+    {
+        $this->info('Publishing command palette views...');
+
+        $this->call('vendor:publish', [
+            '--tag' => 'filament-palette-views',
+            '--force' => $this->option('force'),
+        ]);
+
+        $this->newLine();
+        $this->info('Views published successfully! They can be customized in');
+        $this->line('  <comment>resources/views/vendor/filament-palette/</comment>');
+
+        return Command::SUCCESS;
+    }
+}
