@@ -167,7 +167,10 @@
         },
 
         escapeChar(ch) {
-            return ch === '&' ? '&amp;' : ch === '<' ? '&lt;' : ch === '>' ? '&gt;' : ch === '"' ? '&quot;' : ch;
+            // Compare via char code (34) so no raw double-quote character ever
+            // appears inside this double-quoted x-data attribute, which would
+            // otherwise close the attribute early and break the component.
+            return ch === '&' ? '&amp;' : ch === '<' ? '&lt;' : ch === '>' ? '&gt;' : ch === String.fromCharCode(34) ? '&quot;' : ch;
         },
 
         escape(str) {

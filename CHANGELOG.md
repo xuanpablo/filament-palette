@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-06-09
+
+### Fixed
+
+- Fixed a raw `"` inside the `escapeChar` method of the palette's double-quoted
+  `x-data` attribute, which closed the attribute early — leaking raw JavaScript
+  as page text and throwing `SyntaxError` / `ReferenceError` (`isOpen`, `search`,
+  `results`, …) on every panel page. The comparison now uses
+  `String.fromCharCode(34)`. Added a regression test that asserts the `x-data`
+  attribute contains no attribute-breaking double-quote.
+
 ## [1.1.1] - 2026-06-09
 
 ### Fixed
@@ -61,7 +72,8 @@ First release of the `xuanpablo/filament-palette` fork (formerly
 - Page title fallback previously called the instance method `getTitle()`
   statically, which errored and was silently swallowed.
 
-[Unreleased]: https://github.com/xuanpablo/filament-palette/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/xuanpablo/filament-palette/compare/v1.1.2...HEAD
+[1.1.2]: https://github.com/xuanpablo/filament-palette/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/xuanpablo/filament-palette/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/xuanpablo/filament-palette/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/xuanpablo/filament-palette/releases/tag/v1.0.0
