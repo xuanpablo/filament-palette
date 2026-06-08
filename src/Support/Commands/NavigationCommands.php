@@ -1,6 +1,6 @@
 <?php
 
-namespace Xuanpablo\FilamentPalette\Support\Commands;
+namespace Xuanpablo\CommandPalette\Support\Commands;
 
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
@@ -12,7 +12,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Xuanpablo\FilamentPalette\Support\CommandItem;
+use Xuanpablo\CommandPalette\Support\CommandItem;
 
 class NavigationCommands
 {

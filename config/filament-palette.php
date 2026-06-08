@@ -1,6 +1,6 @@
 <?php
 
-use Xuanpablo\FilamentPalette\Support\CommandItem;
+use Xuanpablo\CommandPalette\Support\CommandItem;
 
 return [
     /*
@@ -87,7 +87,7 @@ return [
     | Custom Commands
     |--------------------------------------------------------------------------
     | Additional commands to include. Each closure should return an array of
-    | Xuanpablo\FilamentPalette\Support\CommandItem instances.
+    | Xuanpablo\CommandPalette\Support\CommandItem instances.
     |
     | Example:
     | 'custom_commands' => [

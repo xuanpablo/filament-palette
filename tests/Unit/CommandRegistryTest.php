@@ -1,11 +1,11 @@
 <?php
 
-namespace Xuanpablo\FilamentPalette\Tests\Unit;
+namespace Xuanpablo\CommandPalette\Tests\Unit;
 
 use Illuminate\Support\Collection;
-use Xuanpablo\FilamentPalette\Support\CommandItem;
-use Xuanpablo\FilamentPalette\Support\CommandRegistry;
-use Xuanpablo\FilamentPalette\Tests\TestCase;
+use Xuanpablo\CommandPalette\Support\CommandItem;
+use Xuanpablo\CommandPalette\Support\CommandRegistry;
+use Xuanpablo\CommandPalette\Tests\TestCase;
 
 class CommandRegistryTest extends TestCase
 {

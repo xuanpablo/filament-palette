@@ -1,6 +1,6 @@
 <?php
 
-namespace Xuanpablo\FilamentPalette\Livewire;
+namespace Xuanpablo\CommandPalette\Livewire;
 
 use Filament\Facades\Filament;
 use Filament\Panel;
@@ -8,8 +8,8 @@ use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
-use Xuanpablo\FilamentPalette\Support\CommandItem;
-use Xuanpablo\FilamentPalette\Support\CommandRegistry;
+use Xuanpablo\CommandPalette\Support\CommandItem;
+use Xuanpablo\CommandPalette\Support\CommandRegistry;
 
 class CommandPalette extends Component
 {

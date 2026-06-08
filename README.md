@@ -36,13 +36,13 @@ composer require xuanpablo/filament-palette
 Register the plugin in your Filament panel provider:
 
 ```php
-use Xuanpablo\FilamentPalette\FilamentPalettePlugin;
+use Xuanpablo\CommandPalette\CommandPalettePlugin;
 
 public function panel(Panel $panel): Panel
 {
     return $panel
         ->plugins([
-            FilamentPalettePlugin::make(),
+            CommandPalettePlugin::make(),
             // ...
         ]);
 }
@@ -94,7 +94,7 @@ Use `--force` to overwrite existing published views.
 Add custom commands via config:
 
 ```php
-use Xuanpablo\FilamentPalette\Support\CommandItem;
+use Xuanpablo\CommandPalette\Support\CommandItem;
 
 'custom_commands' => [
     fn () => [

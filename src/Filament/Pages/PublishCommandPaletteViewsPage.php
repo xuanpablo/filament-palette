@@ -1,6 +1,6 @@
 <?php
 
-namespace Xuanpablo\FilamentPalette\Filament\Pages;
+namespace Xuanpablo\CommandPalette\Filament\Pages;
 
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **BREAKING:** Renamed the PHP namespace `Xuanpablo\FilamentPalette` →
+  `Xuanpablo\CommandPalette`, and the entry-point classes `FilamentPalettePlugin`
+  / `FilamentPaletteServiceProvider` → `CommandPalettePlugin` /
+  `CommandPaletteServiceProvider`. Update your imports and
+  `->plugins([CommandPalettePlugin::make()])`. The Composer package name
+  (`xuanpablo/filament-palette`), config file/key, view namespace, publish tags,
+  and translations are unchanged.
+
 ## [1.1.2] - 2026-06-09
 
 ### Fixed

@@ -1,6 +1,6 @@
 <?php
 
-namespace Xuanpablo\FilamentPalette\Tests\Unit;
+namespace Xuanpablo\CommandPalette\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 

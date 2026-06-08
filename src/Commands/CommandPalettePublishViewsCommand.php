@@ -1,6 +1,6 @@
 <?php
 
-namespace Xuanpablo\FilamentPalette\Commands;
+namespace Xuanpablo\CommandPalette\Commands;
 
 use Illuminate\Console\Command;
 

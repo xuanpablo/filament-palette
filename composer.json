@@ -23,7 +23,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Xuanpablo\\FilamentPalette\\": "src"
+            "Xuanpablo\\CommandPalette\\": "src"
         }
     },
     "require": {
@@ -35,7 +35,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Xuanpablo\\FilamentPalette\\Tests\\": "tests/"
+            "Xuanpablo\\CommandPalette\\Tests\\": "tests/"
         }
     },
     "require-dev": {
@@ -53,7 +53,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Xuanpablo\\FilamentPalette\\FilamentPaletteServiceProvider"
+                "Xuanpablo\\CommandPalette\\CommandPaletteServiceProvider"
             ]
         }
     }

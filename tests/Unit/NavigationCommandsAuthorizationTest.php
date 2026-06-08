@@ -1,9 +1,9 @@
 <?php
 
-namespace Xuanpablo\FilamentPalette\Tests\Unit;
+namespace Xuanpablo\CommandPalette\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Xuanpablo\FilamentPalette\Support\Commands\NavigationCommands;
+use Xuanpablo\CommandPalette\Support\Commands\NavigationCommands;
 
 class FpAccessibleStub
 {

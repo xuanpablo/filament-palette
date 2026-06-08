@@ -1,16 +1,16 @@
 <?php
 
-namespace Xuanpablo\FilamentPalette\Tests;
+namespace Xuanpablo\CommandPalette\Tests;
 
 use Orchestra\Testbench\TestCase as Orchestra;
-use Xuanpablo\FilamentPalette\FilamentPaletteServiceProvider;
+use Xuanpablo\CommandPalette\CommandPaletteServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
     protected function getPackageProviders($app): array
     {
         return [
-            FilamentPaletteServiceProvider::class,
+            CommandPaletteServiceProvider::class,
         ];
     }
 

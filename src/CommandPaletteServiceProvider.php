@@ -1,12 +1,12 @@
 <?php
 
-namespace Xuanpablo\FilamentPalette;
+namespace Xuanpablo\CommandPalette;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Xuanpablo\FilamentPalette\Commands\CommandPalettePublishViewsCommand;
+use Xuanpablo\CommandPalette\Commands\CommandPalettePublishViewsCommand;
 
-class FilamentPaletteServiceProvider extends PackageServiceProvider
+class CommandPaletteServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {

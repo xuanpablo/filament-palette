@@ -1,6 +1,6 @@
 <?php
 
-namespace Xuanpablo\FilamentPalette\Support;
+namespace Xuanpablo\CommandPalette\Support;
 
 use Illuminate\Contracts\Support\Arrayable;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Xuanpablo\FilamentPalette\Support;
+namespace Xuanpablo\CommandPalette\Support;
 
 use Filament\Panel;
 use Illuminate\Support\Collection;
-use Xuanpablo\FilamentPalette\Support\Commands\NavigationCommands;
+use Xuanpablo\CommandPalette\Support\Commands\NavigationCommands;
 
 class CommandRegistry
 {

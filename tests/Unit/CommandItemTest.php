@@ -1,9 +1,9 @@
 <?php
 
-namespace Xuanpablo\FilamentPalette\Tests\Unit;
+namespace Xuanpablo\CommandPalette\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Xuanpablo\FilamentPalette\Support\CommandItem;
+use Xuanpablo\CommandPalette\Support\CommandItem;
 
 class CommandItemTest extends TestCase
 {

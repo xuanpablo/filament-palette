@@ -1,14 +1,14 @@
 <?php
 
-namespace Xuanpablo\FilamentPalette;
+namespace Xuanpablo\CommandPalette;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\View\PanelsRenderHook;
-use Xuanpablo\FilamentPalette\Filament\Pages\PublishCommandPaletteViewsPage;
-use Xuanpablo\FilamentPalette\Livewire\CommandPalette;
+use Xuanpablo\CommandPalette\Filament\Pages\PublishCommandPaletteViewsPage;
+use Xuanpablo\CommandPalette\Livewire\CommandPalette;
 
-class FilamentPalettePlugin implements Plugin
+class CommandPalettePlugin implements Plugin
 {
     public function getId(): string
     {
