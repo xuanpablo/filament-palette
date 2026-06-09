@@ -35,7 +35,40 @@ jobs:
           composer update --prefer-dist --no-interaction --no-progress
 
       - name: Run tests
-        run: vendor/bin/phpunit
+        run: composer test
+
+  browser:
+    runs-on: ubuntu-latest
+    name: Browser smoke test
+    # The browser smoke test itself is currently skipped (WIP — the Filament
+    # panel needs auth/session wiring under the Pest browser server). This job
+    # exercises the Playwright install + harness so it's ready when the skip
+    # is removed.
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, curl, libxml, mbstring, zip
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Install Playwright
+        run: npm install playwright && npx playwright install --with-deps chromium
+
+      - name: Run browser tests
+        run: composer test:browser
 
   quality:
     runs-on: ubuntu-latest
