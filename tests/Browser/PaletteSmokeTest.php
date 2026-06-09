@@ -12,16 +12,14 @@
  * exact pest-plugin-browser API) before it is green. See tests/Browser/TestCase.php.
  */
 
-use function Pest\Browser\visit;
-
 it('opens the palette without JavaScript errors', function () {
-    $page = visit('/admin');
+    $page = $this->visit('/admin');
 
     // Open via the keyboard event the palette listens for, then confirm it renders.
     $page->script("window.dispatchEvent(new CustomEvent('open-command-palette'))");
 
     $page
         ->assertSee('Type a command or search...')
-        ->assertNoJavascriptErrors()
+        ->assertNoJavaScriptErrors()
         ->assertNoConsoleLogs();
 })->group('browser');
