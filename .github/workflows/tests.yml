@@ -40,9 +40,10 @@ jobs:
   browser:
     runs-on: ubuntu-latest
     name: Browser smoke test
-    # WIP: the Filament-panel-in-Pest-browser harness is still being finalised
-    # (see tests/Browser/TestCase.php). Non-gating until green; then drop this.
-    continue-on-error: true
+    # The browser smoke test itself is currently skipped (WIP — the Filament
+    # panel needs auth/session wiring under the Pest browser server). This job
+    # exercises the Playwright install + harness so it's ready when the skip
+    # is removed.
 
     steps:
       - name: Checkout code
